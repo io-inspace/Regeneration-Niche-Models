@@ -1,0 +1,44 @@
+%pathogen-host model:
+%commensalism
+
+function [eqh] = phmodel
+c = 10;
+f = 2;
+d = 2;
+i = 2;
+k = 20;
+m = 10;
+nt = 20;
+b = .5;
+
+H0 = 5;
+P0 = 1;
+
+tmax = 50;
+
+[time, n] = ode45(@phmodelODE,[0 tmax],[H0 P0],[],[c, f, d, i, k, m, nt, b]);
+H = n(:,1);
+P = n(:,2);
+
+figure(1);
+clf;
+plot(time,H,'g-')
+hold on
+plot(time,P,'r-')
+eqh = H(end);
+
+function dn = phmodelODE(time, n, params)
+c = params(1);
+f = params(2);
+d = params(3);
+i = params(4);
+k = params(5);
+m = params(6);
+nt = params(7);
+b = params(8);
+
+H = n(1);
+P = n(2);
+
+dn(1,1) = H*i*(((k*m+1)/(P+1))*(nt-H) - f*H);
+dn(2,1) = H*c*(P/(1+H*b)) - d*P;
