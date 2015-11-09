@@ -1,0 +1,51 @@
+%pathogen-host model
+%mutualists held constant
+%competition
+
+function [eqh] = phmodel2
+i = 2;
+beta = .6;
+delta = .3;
+k = 1.6;
+j = 1.5;
+a = .1;
+d = .1;
+fd = .02;
+
+F0 = 5;
+P0 = 1;
+M0 = 1;
+
+tmax = 500;
+
+[time, n] = ode45(@phmodel2ODE,[0 tmax],[F0 P0 M0],[],[i, beta, delta, k, j, a, d, fd]);
+F = n(:,1);
+P = n(:,2);
+M = n(:,3);
+
+figure(1);
+clf;
+plot(time,F,'g-')
+hold on
+plot(time,P,'r-')
+plot(time,M,'b-')
+eqh = F(end);
+
+function dn = phmodel2ODE(time, n, params)
+i = params(1);
+beta = params(2);
+delta = params(3);
+k = params(4);
+j = params(5);
+a = params(6);
+d = params(7);
+fd = params(8);
+
+
+F = n(1);
+P = n(2);
+M = n(3);
+
+dn(1,1) = F*(i + beta*M - delta*P) - k*M*F - j*P*F + a*M + d*P - fd*F;
+dn(2,1) = j*P*F-d*P;
+dn(3,1) = k*M*F - a*M;
